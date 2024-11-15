@@ -13,6 +13,7 @@ public class DataGeneration {
     // Row or Group
     final static String isRow = "R";
     final static String isGroup = "G";
+    final static String isSingle = "S";
 
     // Legality (11 - Fully legal) (01 - Legal with 1/2 Additions)
     final static String isFullyLegal = "11";
@@ -54,7 +55,7 @@ public class DataGeneration {
                     for (int length = 1; length <= 14 - nums[i]; length++) {
                         String legality = (length >= 3) ? isFullyLegal : isPartLegal;
                         StringBuilder addition = new StringBuilder();
-                        addition.append(setID).append(isRow).append(legality);
+                        addition.append(setID).append(length == 1 ? isSingle : isRow).append(legality);
                         addition.append(typeContentDiv);
                         for (int k = 0; k < length; k++) {
                             addition.append(color).append(getNumStr(nums[(i + k) % nums.length]));
@@ -79,6 +80,31 @@ public class DataGeneration {
                         } else if (length == 13) {
                             // No stone can be appended
                             addition.append("-");
+                        } else if (length == 1) {
+                            addition.append(color).append(getNumStr(getPrevNum(nums[i])));
+                            addition.append(color).append(getNumStr(getNextNum(nums[i])));
+                            switch (color) {
+                                case "b" -> {
+                                    addition.append("s").append(getNumStr(nums[i]));
+                                    addition.append("r").append(getNumStr(nums[i]));
+                                    addition.append("y").append(getNumStr(nums[i]));
+                                }
+                                case "s" -> {
+                                    addition.append("b").append(getNumStr(nums[i]));
+                                    addition.append("r").append(getNumStr(nums[i]));
+                                    addition.append("y").append(getNumStr(nums[i]));
+                                }
+                                case "r" -> {
+                                    addition.append("s").append(getNumStr(nums[i]));
+                                    addition.append("b").append(getNumStr(nums[i]));
+                                    addition.append("y").append(getNumStr(nums[i]));
+                                }
+                                case "y" -> {
+                                    addition.append("s").append(getNumStr(nums[i]));
+                                    addition.append("r").append(getNumStr(nums[i]));
+                                    addition.append("b").append(getNumStr(nums[i]));
+                                }
+                            }
                         } else {
                             addition.append(color).append(getNumStr(getPrevNum(nums[i])));
                             addition.append(color).append(getNumStr(getNextNum(nums[(i + length - 1) % nums.length])));
@@ -92,7 +118,7 @@ public class DataGeneration {
             }
             // TODO groups(1-13)
             for (int num : nums) {
-                for (int length = 1; length <= 4; length++) {
+                for (int length = 2; length <= 4; length++) {
                     String legality = (length >= 3) ? isFullyLegal : isPartLegal;
                     StringBuilder addition = new StringBuilder();
                     addition.append(setID).append(isGroup).append(legality);
